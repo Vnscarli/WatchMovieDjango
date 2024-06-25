@@ -1,7 +1,35 @@
 from rest_framework import serializers
 from watchlist_app.models import Movie
 
-def name_length(value):
+class MovieSerializer(serializers.ModelSerializer):
+    len_description = serializers.SerializerMethodField()
+    class Meta:
+        model = Movie
+        fields="__all__"
+    
+    def get_len_description(self, object):
+        return len(object.description)
+    
+    def validate(self, data):
+        if data['name']==data['description']:
+            raise serializers.ValidationError("Name must not be equal to description")
+        return data
+    
+    
+    def validate_ageRestriction(self, value):
+        if value!=0 and value!=10 and value!=12 and value!=14 and value!=16 and value!=18:
+            raise serializers.ValidationError("Age restriction not possible") 
+        return value
+    
+    def validate_name(self, value):
+        if len(value) < 2:
+            raise serializers.ValidationError("Name must have more than 2 letters")
+        if len(value) > 50:
+            raise serializers.ValidationError("Name must have less than 50 letters")
+        return value
+        
+        
+""" def name_length(value):
     if len(value) < 2:
         raise serializers.ValidationError("Name must have more than 2 letters")
     elif len(value)>50:
@@ -36,5 +64,5 @@ class MovieSerializer(serializers.Serializer):
         if value!=0 and value!=10 and value!=12 and value!=14 and value!=16 and value!=18:
             raise serializers.ValidationError("Age restriction not possible") 
         return value
-    
+     """
     
