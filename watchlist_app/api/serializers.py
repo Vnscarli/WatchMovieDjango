@@ -1,6 +1,19 @@
 from rest_framework import serializers
-from watchlist_app.models import Movie
+from watchlist_app.models import Movie, StreamingPlatform
 
+
+class StreamingPlatformSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = StreamingPlatform
+        fields = "__all__"
+        
+    def validate(self, data):
+        if data['name']==data['about']:
+            raise serializers.ValidationError("Name must not be equal to description")
+        return data
+    
+    
 class MovieSerializer(serializers.ModelSerializer):
     len_description = serializers.SerializerMethodField()
     class Meta:
