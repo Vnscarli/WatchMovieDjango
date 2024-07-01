@@ -29,18 +29,20 @@ class MovieSerializer(serializers.ModelSerializer):
         return value
 
 class StreamingPlatformSerializer(serializers.ModelSerializer):
-    movies = MovieSerializer(many=True, read_only=True)
+    movies = serializers.SerializerMethodField()
     class Meta:
         model = StreamingPlatform
         fields = "__all__"
     
-    def create(self, validated_data):
+    """def create(self, validated_data):
         movies_data=validated_data.pop('movies')
         platform = StreamingPlatform.objects.create(**validated_data)
         for movie_data in movies_data:
             Movie.objects.create(platform=platform, **movie_data)
-        return platform
-    
+        return platform """
+        
+    def get_movies(self, obj):
+        return [movie.description for movie in obj.movies.all()]
 
     def validate(self, data):
         if data['name']==data['about']:
