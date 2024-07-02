@@ -1,12 +1,12 @@
 from rest_framework import serializers
-from watchlist_app.models import Movie, StreamingPlatform
+from watchlist_app.models import Movie, StreamingPlatform, Review
 
 class MovieSerializer(serializers.ModelSerializer):
     len_description = serializers.SerializerMethodField()
     class Meta:
         model = Movie
         fields="__all__"
-    
+       
     def get_len_description(self, object):
         return len(object.description)
     
@@ -28,11 +28,11 @@ class MovieSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Name must have less than 50 letters")
         return value
 
-class StreamingPlatformSerializer(serializers.ModelSerializer):
+class StreamingPlatformSerializer(serializers.HyperlinkedModelSerializer):
     movies = serializers.SerializerMethodField()
     class Meta:
         model = StreamingPlatform
-        fields = "__all__"
+        exclude =[]
     
     """def create(self, validated_data):
         movies_data=validated_data.pop('movies')
@@ -49,8 +49,10 @@ class StreamingPlatformSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Name must not be equal to description")
         return data
     
-    
-
+class ReviewSerializer:
+    class Meta:
+        model = Review
+        fields = "__all__"
         
         
 """ def name_length(value):

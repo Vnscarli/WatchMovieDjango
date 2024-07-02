@@ -6,7 +6,7 @@ from watchlist_app.models import Movie, StreamingPlatform
 from  watchlist_app.api.serializers import MovieSerializer, StreamingPlatformSerializer
 
 class StreamingPlatformListAV(APIView):
-    
+
     def get(self, request):
         platforms=StreamingPlatform.objects.all()
         serializer=StreamingPlatformSerializer(platforms, many=True, context={'request':request})
@@ -26,7 +26,7 @@ class StremingPlatformInfoAV(APIView):
             platform = StreamingPlatform.objects.get(pk=pk)
         except StreamingPlatform.DoesNotExist:
             return Response({'error': 'Streaming Platform not found'}, status=status.HTTP_404_NOT_FOUND)
-        serializer= StreamingPlatformSerializer(platform)
+        serializer= StreamingPlatformSerializer(platform, context={'request':request})
         return Response(serializer.data, status=status.HTTP_200_OK)
     
     def put(self, request, pk):

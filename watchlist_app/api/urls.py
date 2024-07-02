@@ -4,7 +4,7 @@ from watchlist_app.api.views import MovieListAV, MovieInfoAV, StreamingPlatformL
 
 urlpatterns=[
     path('listmovies/', MovieListAV.as_view(), name='movie-list'),
-    path('<int:pk>/', MovieInfoAV.as_view(), name='movie-info'),
+    path('<int:pk>/', MovieInfoAV.as_view(), name='movie-detail'),
     path('platform/', StreamingPlatformListAV.as_view(), name='platform-list'),
-    path('platform/<int:pk>', StremingPlatformInfoAV.as_view(), name='platform-info')
+    path('platform/<int:pk>', StremingPlatformInfoAV.as_view(), name='streamingplatform-detail')
 ]
