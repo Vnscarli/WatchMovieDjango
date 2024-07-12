@@ -2,12 +2,54 @@ from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from watchlist_app.models import Movie, StreamingPlatform
-from  watchlist_app.api.serializers import MovieSerializer, StreamingPlatformSerializer
+from rest_framework import mixins, generics
+from watchlist_app.models import Movie, StreamingPlatform, Review
+from  watchlist_app.api.serializers import MovieSerializer, StreamingPlatformSerializer, ReviewSerializer
 
-class StreamingPlatformListAV(APIView):
 
-    def get(self, request):
+class ReviewsListAV(mixins.ListModelMixin,
+                mixins.CreateModelMixin,
+                generics.GenericAPIView):
+    queryset=Review.objects.all()
+    serializer_class=ReviewSerializer
+    
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+    
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+    
+
+class ReviewsInfoAV(mixins.RetrieveModelMixin,
+                    mixins.UpdateModelMixin,
+                    mixins.DestroyModelMixin,
+                    generics. GenericAPIView):
+    queryset=Review.objects.all()
+    serializer_class=ReviewSerializer
+    
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
+    
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
+    
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
+
+class StreamingPlatformListAV(mixins.ListModelMixin,
+                              mixins.CreateModelMixin,
+                              generics.GenericAPIView):
+    queryset= StreamingPlatform.objects.all()
+    serializer_class= StreamingPlatformSerializer
+    
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+    
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+    
+    
+""" def get(self, request):
         platforms=StreamingPlatform.objects.all()
         serializer=StreamingPlatformSerializer(platforms, many=True, context={'request':request})
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -17,7 +59,7 @@ class StreamingPlatformListAV(APIView):
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST) """
     
 class StremingPlatformInfoAV(APIView):
     
