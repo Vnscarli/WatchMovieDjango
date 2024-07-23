@@ -1,6 +1,8 @@
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from django.shortcuts import get_object_or_404
+from rest_framework import viewsets
 from rest_framework import status
 from rest_framework import mixins, generics
 from watchlist_app.models import Movie, StreamingPlatform, Review
@@ -28,6 +30,28 @@ class ReviewsInfo(generics.RetrieveUpdateDestroyAPIView):
     queryset=Review.objects.all()
     serializer_class=ReviewSerializer
     
+    
+class StreamingPlatformVS(viewsets.ModelViewSet): #You can use read only to avoid changing database
+    queryset=StreamingPlatform.objects.all()
+    serializer_class=StreamingPlatformSerializer
+    
+    
+    
+""" Example of viewset  
+   def list(self, request):
+        queryset=StreamingPlatform.objects.all()
+        serializer=StreamingPlatformSerializer(queryset, many=True, context={'request': request})
+        return Response(serializer.data)
+    
+    def retrieve(self, request, pk=None):
+        queryset=StreamingPlatform.objects.all()
+        platform = get_object_or_404(queryset, pk=pk)
+        serializer=StreamingPlatformSerializer(platform, context={'request': request})
+        return Response(serializer.data)
+    """
+        
+    
+""" Using mixins to list all the platforms
 class StreamingPlatformListAV(mixins.ListModelMixin,
                               mixins.CreateModelMixin,
                               generics.GenericAPIView):
@@ -38,7 +62,7 @@ class StreamingPlatformListAV(mixins.ListModelMixin,
         return self.list(request, *args, **kwargs)
     
     def post(self, request, *args, **kwargs):
-        return self.create(request, *args, **kwargs)
+        return self.create(request, *args, **kwargs) """
     
     
 """ def get(self, request):
@@ -53,6 +77,7 @@ class StreamingPlatformListAV(mixins.ListModelMixin,
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST) """
     
+""" Using mixins to get specific platform 
 class StremingPlatformInfoAV(mixins.RetrieveModelMixin,
                     mixins.UpdateModelMixin,
                     mixins.DestroyModelMixin,
@@ -67,7 +92,7 @@ class StremingPlatformInfoAV(mixins.RetrieveModelMixin,
         return self.update(request, *args, **kwargs)
     
     def delete(self, request, *args, **kwargs):
-        return self.destroy(request, *args, **kwargs)
+        return self.destroy(request, *args, **kwargs) """
 
 class MovieListAV (APIView):
     
