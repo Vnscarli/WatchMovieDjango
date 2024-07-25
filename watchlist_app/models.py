@@ -1,5 +1,6 @@
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.contrib.auth.models import User
 
 class StreamingPlatform(models.Model):
     name = models.CharField(max_length=50)
@@ -20,9 +21,10 @@ class Movie(models.Model):
     
     def __str__(self):
         return self.name
-    
+
     
 class Review(models.Model):
+    editor = models.ForeignKey(User, on_delete=models.CASCADE)
     rating = models.PositiveIntegerField(validators=[MinValueValidator(1),  MaxValueValidator(10)])
     movies = models.ForeignKey(Movie, on_delete=models.CASCADE, related_name="reviews")
     created = models.DateTimeField(auto_now_add=True)

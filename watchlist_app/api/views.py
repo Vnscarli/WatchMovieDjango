@@ -1,22 +1,34 @@
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.exceptions import ValidationError
+from rest_framework.permissions import IsAdminUser
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets
 from rest_framework import status
 from rest_framework import mixins, generics
 from watchlist_app.models import Movie, StreamingPlatform, Review
-from  watchlist_app.api.serializers import MovieSerializer, StreamingPlatformSerializer, ReviewSerializer
+from watchlist_app.api.serializers import MovieSerializer, StreamingPlatformSerializer, ReviewSerializer
+from watchlist_app.api.permissions import AdminorReadOnly, ReviewOwnerorReadOnly
 
 
 class ReviewsCreate(generics.CreateAPIView):
     serializer_class=ReviewSerializer
     
+    def get_queryset(self):
+        return Review.objects.all()
+    
     def perform_create(self, serializer):
         pk = self.kwargs.get('pk')
         movie = Movie.objects.get(pk=pk)
         
-        serializer.save(movies=movie)
+        review_user = self.request.user
+        review_queryset= Review.objects.filter(movies=movie, editor=review_user)
+        
+        if review_queryset.exists():
+            raise ValidationError("Let others review this movie!!")
+        
+        serializer.save(movies=movie, editor=review_user)
 
 class ReviewsList(generics.ListAPIView):
     serializer_class=ReviewSerializer
@@ -29,9 +41,11 @@ class ReviewsList(generics.ListAPIView):
 class ReviewsInfo(generics.RetrieveUpdateDestroyAPIView):
     queryset=Review.objects.all()
     serializer_class=ReviewSerializer
+    permission_classes=[ReviewOwnerorReadOnly]
     
     
 class StreamingPlatformVS(viewsets.ModelViewSet): #You can use read only to avoid changing database
+    permission_classes=[IsAdminUser]
     queryset=StreamingPlatform.objects.all()
     serializer_class=StreamingPlatformSerializer
     
@@ -133,7 +147,7 @@ class MovieInfoAV(APIView):
         movie = Movie.objects.get(pk=pk)
         movie.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-    
+
     
     
     
