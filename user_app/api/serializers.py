@@ -16,7 +16,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
         password2 = self.validated_data['password2']
         
         if password != password2:
-            raise serializers.ValidationError({'error':'Passwoerds must match!'})
+            raise serializers.ValidationError({'error':'Passwords must match!'})
         
         if User.objects.filter(email=self.validated_data['email']).exists():
             raise serializers.ValidationError({'error':'This email has been taken!'})
