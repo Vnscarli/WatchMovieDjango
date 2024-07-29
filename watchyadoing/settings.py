@@ -137,12 +137,24 @@ REST_FRAMEWORK = {
     #    'rest_framework.permissions.IsAuthenticated',
     #git],
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        #'rest_framework.authentication.TokenAuthentication',
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-    ]
-}
+        'rest_framework.authentication.TokenAuthentication',
+        #'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ],
+    #'DEFAULT_THROTTLE_CLASSES': [
+    #    'rest_framework.throttling.AnonRateThrottle',
+    #    'rest_framework.throttling.UserRateThrottle'
+    #],
+    'DEFAULT_THROTTLE_RATES': {
+        #'anon': '1/day',
+        #'user': '3/day',
+        'review-create': '1/day',
+        'review-list': '3/day',
+        'review-detail': '5/day'
+    }
 
+}
+""" 
 SIMPLE_JWT={
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=15),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
-}
+} """

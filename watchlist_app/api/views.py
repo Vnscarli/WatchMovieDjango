@@ -3,6 +3,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
+from rest_framework.throttling import ScopedRateThrottle
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets
 from rest_framework import status
@@ -10,11 +11,13 @@ from rest_framework import mixins, generics
 from watchlist_app.models import Movie, StreamingPlatform, Review
 from watchlist_app.api.serializers import MovieSerializer, StreamingPlatformSerializer, ReviewSerializer
 from watchlist_app.api.permissions import IsAdminorReadOnly, IsReviewOwnerorReadOnly
+from watchlist_app.api.throttling import RevieewListThrottle, ReviewCreateThrottle
 
 
 class ReviewsCreate(generics.CreateAPIView):
     serializer_class=ReviewSerializer
     permission_classes = [IsAuthenticated]
+    throttle_classes = [ReviewCreateThrottle]
     
     def get_queryset(self):
         return Review.objects.all()
@@ -33,6 +36,7 @@ class ReviewsCreate(generics.CreateAPIView):
 
 class ReviewsList(generics.ListAPIView):
     serializer_class=ReviewSerializer
+    throttle_classes = [RevieewListThrottle]
     
     
     def get_queryset(self):
@@ -43,6 +47,9 @@ class ReviewsInfo(generics.RetrieveUpdateDestroyAPIView):
     queryset=Review.objects.all()
     serializer_class=ReviewSerializer
     permission_classes=[IsReviewOwnerorReadOnly]
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = 'review-detail'
+    
     
     
 class StreamingPlatformVS(viewsets.ModelViewSet): #You can use read only to avoid changing database
