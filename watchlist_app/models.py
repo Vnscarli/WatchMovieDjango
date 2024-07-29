@@ -16,7 +16,7 @@ class Movie(models.Model):
     description = models.CharField(max_length=500)
     active = models.BooleanField(default=True)
     ageRestriction = models.IntegerField(default=0)
-    genre = models.CharField(default="Escolher")
+    genre = models.CharField(max_length=60)
     platform = models.ForeignKey(StreamingPlatform, on_delete=models.SET_NULL, null=True, blank=True, related_name="movies")
     
     def __str__(self):
