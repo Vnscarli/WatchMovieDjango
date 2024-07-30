@@ -5,6 +5,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.throttling import ScopedRateThrottle
 from django.shortcuts import get_object_or_404
+import django_filters.rest_framework
 from rest_framework import viewsets
 from rest_framework import status
 from rest_framework import mixins, generics
@@ -13,6 +14,14 @@ from watchlist_app.api.serializers import MovieSerializer, StreamingPlatformSeri
 from watchlist_app.api.permissions import IsAdminorReadOnly, IsReviewOwnerorReadOnly
 from watchlist_app.api.throttling import RevieewListThrottle, ReviewCreateThrottle
 
+class UserReviews(generics.ListAPIView):
+    serializer_class = ReviewSerializer
+    
+    def get_queryset(self):
+        #username = self.kwargs['username']
+        username= self.request.query_params.get('username', None)
+        return Review.objects.filter(editor__username=username)
+    
 
 class ReviewsCreate(generics.CreateAPIView):
     serializer_class=ReviewSerializer
@@ -37,6 +46,8 @@ class ReviewsCreate(generics.CreateAPIView):
 class ReviewsList(generics.ListAPIView):
     serializer_class=ReviewSerializer
     throttle_classes = [RevieewListThrottle]
+    filter_backends = [django_filters.rest_framework.DjangoFilterBackend]
+    filterset_fields = ['editor__username', 'rating']
     
     
     def get_queryset(self):
