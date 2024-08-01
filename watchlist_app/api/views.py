@@ -9,10 +9,12 @@ import django_filters.rest_framework
 from rest_framework import viewsets
 from rest_framework import status
 from rest_framework import mixins, generics
+from rest_framework import  filters
 from watchlist_app.models import Movie, StreamingPlatform, Review
 from watchlist_app.api.serializers import MovieSerializer, StreamingPlatformSerializer, ReviewSerializer
 from watchlist_app.api.permissions import IsAdminorReadOnly, IsReviewOwnerorReadOnly
 from watchlist_app.api.throttling import RevieewListThrottle, ReviewCreateThrottle
+from watchlist_app.api.filters import MovieFilter
 
 class UserReviews(generics.ListAPIView):
     serializer_class = ReviewSerializer
@@ -46,8 +48,8 @@ class ReviewsCreate(generics.CreateAPIView):
 class ReviewsList(generics.ListAPIView):
     serializer_class=ReviewSerializer
     throttle_classes = [RevieewListThrottle]
-    filter_backends = [django_filters.rest_framework.DjangoFilterBackend]
-    filterset_fields = ['editor__username', 'rating']
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['editor__username', 'rating']
     
     
     def get_queryset(self):
@@ -129,10 +131,13 @@ class StremingPlatformInfoAV(mixins.RetrieveModelMixin,
 
 class MovieListAV (APIView):
     permission_classes=[IsAdminorReadOnly]
+    filter_backends = [django_filters.rest_framework.DjangoFilterBackend]
+    filterset_class = MovieFilter
     
     def get(self, request):
-        movies = Movie.objects.all()
-        serializer= MovieSerializer(movies, many=True)
+        queryset = Movie.objects.all()
+        filtered_queryset = self.filterset_class(request.GET, queryset=queryset).qs
+        serializer= MovieSerializer(filtered_queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
     def post(self, request):

@@ -149,8 +149,8 @@ REST_FRAMEWORK = {
         #'anon': '1/day',
         #'user': '3/day',
         'review-create': '1/day',
-        'review-list': '3/day',
-        'review-detail': '5/day'
+        'review-list': '1000/day',
+        'review-detail': '10000/day'
     }
 
 }
