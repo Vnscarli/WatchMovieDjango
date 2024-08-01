@@ -4,12 +4,16 @@ from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.throttling import ScopedRateThrottle
-from django.shortcuts import get_object_or_404
-import django_filters.rest_framework
+from rest_framework.pagination import LimitOffsetPagination
+
 from rest_framework import viewsets
 from rest_framework import status
 from rest_framework import mixins, generics
 from rest_framework import  filters
+
+from django.shortcuts import get_object_or_404
+import django_filters.rest_framework
+
 from watchlist_app.models import Movie, StreamingPlatform, Review
 from watchlist_app.api.serializers import MovieSerializer, StreamingPlatformSerializer, ReviewSerializer
 from watchlist_app.api.permissions import IsAdminorReadOnly, IsReviewOwnerorReadOnly
@@ -134,11 +138,15 @@ class MovieListAV (APIView):
     filter_backends = [django_filters.rest_framework.DjangoFilterBackend]
     filterset_class = MovieFilter
     
+    
     def get(self, request):
         queryset = Movie.objects.all()
         filtered_queryset = self.filterset_class(request.GET, queryset=queryset).qs
-        serializer= MovieSerializer(filtered_queryset, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        paginator = LimitOffsetPagination()
+        result_page = paginator.paginate_queryset(filtered_queryset, request)
+        serializer= MovieSerializer(result_page, many=True)
+        return paginator.get_paginated_response(serializer.data)
+        #return Response(serializer.data, status=status.HTTP_200_OK)
     
     def post(self, request):
         serializer= MovieSerializer(data=request.data)

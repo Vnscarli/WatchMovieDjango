@@ -9,7 +9,8 @@ class ReviewSerializer(serializers.ModelSerializer):
         
 
 class MovieSerializer(serializers.ModelSerializer):
-    reviews = ReviewSerializer(many=True, read_only=True)
+    #reviews = ReviewSerializer(many=True, read_only=True)
+    platform = serializers.CharField(source='platform.name')
     len_description = serializers.SerializerMethodField()
     class Meta:
         model = Movie
