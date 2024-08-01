@@ -48,8 +48,8 @@ class ReviewsCreate(generics.CreateAPIView):
 class ReviewsList(generics.ListAPIView):
     serializer_class=ReviewSerializer
     throttle_classes = [RevieewListThrottle]
-    filter_backends = [filters.SearchFilter]
-    search_fields = ['editor__username', 'rating']
+    filter_backends = [filters.OrderingFilter]
+    ordering_fields = ['editor__username', 'rating']
     
     
     def get_queryset(self):
