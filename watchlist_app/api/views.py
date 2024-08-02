@@ -19,6 +19,7 @@ from watchlist_app.api.serializers import MovieSerializer, StreamingPlatformSeri
 from watchlist_app.api.permissions import IsAdminorReadOnly, IsReviewOwnerorReadOnly
 from watchlist_app.api.throttling import RevieewListThrottle, ReviewCreateThrottle
 from watchlist_app.api.filters import MovieFilter
+from watchlist_app.api.pagination import ReviewsPagination, ReviewsLOPagination, ReviewsCPagination
 
 class UserReviews(generics.ListAPIView):
     serializer_class = ReviewSerializer
@@ -54,6 +55,7 @@ class ReviewsList(generics.ListAPIView):
     throttle_classes = [RevieewListThrottle]
     filter_backends = [filters.OrderingFilter]
     ordering_fields = ['editor__username', 'rating']
+    pagination_class = ReviewsCPagination
     
     
     def get_queryset(self):
