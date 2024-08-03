@@ -17,7 +17,7 @@ import django_filters.rest_framework
 from watchlist_app.models import Movie, StreamingPlatform, Review
 from watchlist_app.api.serializers import MovieSerializer, StreamingPlatformSerializer, ReviewSerializer
 from watchlist_app.api.permissions import IsAdminorReadOnly, IsReviewOwnerorReadOnly
-from watchlist_app.api.throttling import RevieewListThrottle, ReviewCreateThrottle
+from watchlist_app.api.throttling import ReviewListThrottle, ReviewCreateThrottle
 from watchlist_app.api.filters import MovieFilter
 from watchlist_app.api.pagination import ReviewsPagination, ReviewsLOPagination, ReviewsCPagination
 
@@ -52,7 +52,7 @@ class ReviewsCreate(generics.CreateAPIView):
 
 class ReviewsList(generics.ListAPIView):
     serializer_class=ReviewSerializer
-    throttle_classes = [RevieewListThrottle]
+    throttle_classes = [ReviewListThrottle]
     filter_backends = [filters.OrderingFilter]
     ordering_fields = ['editor__username', 'rating']
     pagination_class = ReviewsCPagination

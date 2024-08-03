@@ -4,5 +4,5 @@ class ReviewCreateThrottle(UserRateThrottle):
     scope = 'review-create'
     
 
-class RevieewListThrottle(UserRateThrottle):
+class ReviewListThrottle(UserRateThrottle):
     scope = 'review-list'
